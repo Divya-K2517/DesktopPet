@@ -1,8 +1,20 @@
 import sys
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QLabel, QApplication
+from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QPushButton
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QMovie
+
+def showInfoBox (app, pet):
+    screen = app.primaryScreen()
+    geometry = screen.availableGeometry() #getting the geometry of the screen
+    x = geometry.left()
+    y = geometry.bottom() - pet.height()
+
+    # Show the info box
+    infoBox = InfoBox(pet)
+    infoBox.move(x + (infoBox.width()/4), y - infoBox.height())
+    infoBox.exec()
+
 
 class DesktopPet(QLabel):
     def __init__(self, gifFiles):
@@ -39,6 +51,12 @@ class DesktopPet(QLabel):
         self.setMovie(self.movie)
         self.setFixedSize(self.pic_size)
         self.movie.start()
+    #when pet is double clicked info box will show
+    def mouseDoubleClickEvent(self, event):
+        print("Double-click detected!")
+        if event.button() == Qt.LeftButton:
+            print("left button")
+            showInfoBox(app, self)
 
     def mousePressEvent(self, ev):
         if (ev.button() == Qt.LeftButton):
@@ -58,9 +76,63 @@ class DesktopPet(QLabel):
         painter.fillRect(self.rect(), QtCore.Qt.transparent)
         super().paintEvent(event)
 
+
+class InfoBox(QDialog):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self.setWindowTitle("Desktop Pet Instructions")
+        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        self.setModal(True)
+        self.setFixedSize(260, 180)
+        #adding instructions to layout
+        layout = QVBoxLayout()
+        instructions = QLabel(
+            "🐾 Desktop Pet Controls 🐾\n\n"
+            "• Drag with left mouse button\n"
+            "• Right-click to change emote\n"
+            "• Double-click to view controls again\n"
+            "• Click 'Close Pet' to exit"
+        )
+        instructions.setWordWrap(True)
+        layout.addWidget(instructions)
+
+        closeBtn = QPushButton("Close Pet")
+        closeBtn.setStyleSheet("""
+            QPushButton {
+                background-color: #ececec;
+                border: 1px solid #888;
+                border-radius: 6px;
+                padding: 6px 12px;
+                color: #222;
+            }
+            QPushButton:hover {
+                background-color: #d6d6d6;
+            }
+        """)
+        closeBtn.clicked.connect(self.closePet)
+
+        layout.addWidget(closeBtn)
+        self.setLayout(layout)
+
+    def closePet(self):
+        #closes program
+        print("closing program")
+        QApplication.instance().quit()
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     pet = DesktopPet(["gifFiles/1.gif", "gifFiles/2.gif", "gifFiles/3.gif", "gifFiles/4.gif"])
     pet.show()
+    #moving the pet to make it spawn in lower left
+    screen = app.primaryScreen()
+    geometry = screen.availableGeometry() #getting the geometry of the screen
+    x = geometry.left()
+    y = geometry.bottom() - pet.height()
+    pet.move(x, y)
+
+    # Show the info box
+    showInfoBox(app, pet)
+
     sys.exit(app.exec())
 
