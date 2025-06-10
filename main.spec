@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('gifFiles', 'gifFiles')],
+    datas=[('/Users/divyakumari/DesktopPet/gifFiles', 'gifFiles')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
