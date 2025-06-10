@@ -146,7 +146,7 @@ if __name__ == "__main__":
     resource_path("gifFiles/3.gif"),
     resource_path("gifFiles/4.gif"),
     ]   
-    pet = DesktopPet(["gifFiles/1.gif", "gifFiles/2.gif", "gifFiles/5.gif", "gifFiles/3.gif", "gifFiles/4.gif"])
+    pet = DesktopPet(gif_paths)
     pet.show()
     #moving the pet to make it spawn in lower left
     screen = app.primaryScreen()
