@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PySide6 import QtGui, QtCore
 from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu
 from PySide6.QtCore import Qt, QSize, QTimer
@@ -14,7 +14,13 @@ def showInfoBox (app, pet):
     infoBox = InfoBox(pet)
     infoBox.move(x + (infoBox.width()/4), y - infoBox.height())
     infoBox.exec()
-
+#to make the file paths availible in the final application
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class DesktopPet(QLabel):
     def __init__(self, gifFiles):
@@ -122,7 +128,8 @@ class InfoBox(QDialog):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("gifFiles/logo.png"))
+    logo = resource_path("gifFiles/logo.png")
+    app.setWindowIcon(QIcon(logo))
     app.setQuitOnLastWindowClosed(False)
     # Create the system tray icon that allows logo to stay even when program is closed
     tray = QSystemTrayIcon(QIcon("gifFiles/logo.png"), parent=app)
@@ -133,6 +140,12 @@ if __name__ == "__main__":
     tray.setContextMenu(menu)
     tray.show()
 
+    gif_paths = [
+    resource_path("gifFiles/1.gif"),
+    resource_path("gifFiles/2.gif"),
+    resource_path("gifFiles/3.gif"),
+    resource_path("gifFiles/4.gif"),
+    ]   
     pet = DesktopPet(["gifFiles/1.gif", "gifFiles/2.gif", "gifFiles/5.gif", "gifFiles/3.gif", "gifFiles/4.gif"])
     pet.show()
     #moving the pet to make it spawn in lower left
