@@ -1,8 +1,8 @@
 import sys
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QPushButton
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QLabel, QApplication, QDialog, QVBoxLayout, QPushButton, QSystemTrayIcon, QMenu
+from PySide6.QtCore import Qt, QSize, QTimer
+from PySide6.QtGui import QMovie, QIcon, QAction
 
 def showInfoBox (app, pet):
     screen = app.primaryScreen()
@@ -122,7 +122,18 @@ class InfoBox(QDialog):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    pet = DesktopPet(["gifFiles/1.gif", "gifFiles/2.gif", "gifFiles/3.gif", "gifFiles/4.gif"])
+    app.setWindowIcon(QIcon("gifFiles/logo.png"))
+    app.setQuitOnLastWindowClosed(False)
+    # Create the system tray icon that allows logo to stay even when program is closed
+    tray = QSystemTrayIcon(QIcon("gifFiles/logo.png"), parent=app)
+    menu = QMenu()
+    quit_action = QAction("Quit")
+    quit_action.triggered.connect(app.quit)
+    menu.addAction(quit_action)
+    tray.setContextMenu(menu)
+    tray.show()
+
+    pet = DesktopPet(["gifFiles/1.gif", "gifFiles/2.gif", "gifFiles/5.gif", "gifFiles/3.gif", "gifFiles/4.gif"])
     pet.show()
     #moving the pet to make it spawn in lower left
     screen = app.primaryScreen()
@@ -131,8 +142,9 @@ if __name__ == "__main__":
     y = geometry.bottom() - pet.height()
     pet.move(x, y)
 
-    # Show the info box
-    showInfoBox(app, pet)
+    # will show the info box after the main event loop starts
+    #if the info box was shown before, the functions inside it that rely on the pet would not work
+    QTimer.singleShot(0, lambda: showInfoBox(app, pet))
 
     sys.exit(app.exec())
 
