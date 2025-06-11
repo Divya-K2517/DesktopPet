@@ -1,5 +1,7 @@
 # Desktop Pet
 
+<img src="./gifFiles/emote-switching.gif" width="400"/> <img src="./gifFiles/instructions.gif" width="400"/>
+
 **🐶 Description:**  
 A PySide6-powered desktop pet that reacts to your clicks, follows your cursor, and keeps you company during coding sessions! 
 
